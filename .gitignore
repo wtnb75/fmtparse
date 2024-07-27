@@ -1,0 +1,7 @@
+build
+dist
+cover
+.coverage
+*.egg-info
+*.c
+*.so
