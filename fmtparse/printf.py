@@ -17,7 +17,7 @@ class Pstate(Enum):
     escape = auto()
 
 
-def parse(s: str, conversion: str, modifier: str, index: str = None, percent: str = "%") -> \
+def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, percent: str = "%") -> \
         Generator[tuple[Optional[str], str, str], None, None]:
     r"""
     parse printf-style format
@@ -25,10 +25,10 @@ def parse(s: str, conversion: str, modifier: str, index: str = None, percent: st
     >>> list(parse("hello %0-9s\\n", "s", "0123456789-"))
     [(None, 'hello ', None), ('s', '0-9', ''), (None, '\n', '')]
     """
-    state = Pstate.normal
-    text_val = ""
-    modifier_val = ""
-    index_val = ""
+    state: Pstate = Pstate.normal
+    text_val: str = ""
+    modifier_val: str = ""
+    index_val: str = ""
     for c in s:
         if state == Pstate.normal:
             if c in percent:

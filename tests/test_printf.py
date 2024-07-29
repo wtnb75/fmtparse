@@ -1,10 +1,5 @@
 import unittest
 import fmtparse.printf
-try:
-    import fmtparse.printf_bin
-    no_binary = False
-except ImportError:
-    no_binary = True
 
 simple_glibc = [
     ("%s %.2f %02x %12d",
@@ -26,21 +21,10 @@ simple_python = [
 
 
 class TestProstr(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.mod = fmtparse.printf
-
     def test_simple_python(self):
         for a, b in simple_python:
-            self.assertEqual(b, list(self.mod.parse_python(a)))
+            self.assertEqual(b, list(fmtparse.printf.parse_python(a)))
 
     def test_simple_glibc(self):
         for a, b in simple_glibc:
-            self.assertEqual(b, list(self.mod.parse_glibc(a)))
-
-
-@unittest.skipIf(no_binary, "no cython binary")
-class TestProstr_cython(TestProstr):
-    @classmethod
-    def setUpClass(cls):
-        cls.mod = fmtparse.printf_bin
+            self.assertEqual(b, list(fmtparse.printf.parse_glibc(a)))
