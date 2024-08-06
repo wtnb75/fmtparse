@@ -49,10 +49,14 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
             if c not in var_chars:
                 _log.debug("yield var %s %s", repr(dollar_val), repr(opt_val))
                 yield "var", dollar_val, opt_val
-                state = Dstate.normal
                 dollar_val = ""
-                text_val = c
                 opt_val = ""
+                text_val = ""
+                if c == mode[0]:
+                    state = Dstate.dollar
+                else:
+                    state = Dstate.normal
+                    text_val = c
                 continue
             dollar_val += c
         elif state == Dstate.in_par:
