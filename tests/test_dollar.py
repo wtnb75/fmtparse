@@ -4,6 +4,7 @@ import fmtparse.wellknown
 
 simple_d = [
     (r"hello $name", [("text", "hello ", None), ("var", "name", '')]),
+    (r"$abc$def$hij", [("var", "abc", ""), ("var", "def", ''), ("var", "hij", "")]),
     (r"abc $def $hij klm${op}qrstu", [
         ("text", "abc ", None), ("var", "def", ""), ("text", " ", None), ("var", "hij", ""),
         ("text", " klm", None), ("var", "op", ""), ("text", "qrstu", None)]),
