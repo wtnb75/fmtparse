@@ -1,18 +1,36 @@
 import unittest
 import fmtparse.dollar
 import fmtparse.wellknown
+from fmtparse.common import Parsed, ParsedType
 
 simple_d = [
-    (r"hello $name", [("text", "hello ", None), ("var", "name", '')]),
-    (r"$abc$def$hij", [("var", "abc", ""), ("var", "def", ''), ("var", "hij", "")]),
+    (r"hello $name", [
+        Parsed(ParsedType.text, "hello "),
+        Parsed(ParsedType.variable, "name")]),
+    (r"$abc$def$hij", [
+        Parsed(ParsedType.variable, "abc"),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.variable, "hij")]),
     (r"abc $def $hij klm${op}qrstu", [
-        ("text", "abc ", None), ("var", "def", ""), ("text", " ", None), ("var", "hij", ""),
-        ("text", " klm", None), ("var", "op", ""), ("text", "qrstu", None)]),
+        Parsed(ParsedType.text, "abc "),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "hij"),
+        Parsed(ParsedType.text, " klm"),
+        Parsed(ParsedType.variable, "op"),
+        Parsed(ParsedType.text, "qrstu")]),
     (r"$def $hij klm${op-hello} $world", [
-        ("var", "def", ""), ("text", " ", None), ("var", "hij", ""), ("text", " klm", None),
-        ("var", "op", "hello"), ("text", " ", None), ("var", "world", "")]),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "hij"),
+        Parsed(ParsedType.text, " klm"),
+        Parsed(ParsedType.variable, "op", "hello"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "world")]),
     (r"${hello-world} ${xyz-abc}", [
-        ("var", "hello", "world"), ("text", " ", None), ("var", "xyz", "abc")]),
+        Parsed(ParsedType.variable, "hello", "world"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "xyz", "abc")]),
 ]
 
 

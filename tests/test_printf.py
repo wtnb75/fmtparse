@@ -1,24 +1,45 @@
 import unittest
 import fmtparse.printf
+from fmtparse.common import Parsed, ParsedType
 
 simple_glibc = [
-    ("%s %.2f %02x %12d",
-     [("s", '', ''), (None, " ", None), ("f", '.2', ''), (None, " ", None),
-      ("x", "02", ""), (None, " ", None), ("d", "12", "")]),
-    ("%s %%s %%%s",
-     [('s', '', ''), (None, ' ', None), ('%', '', ''),
-      (None, 's ', None), ('%', '', ''), ('s', '', '')]),
-    ("%s%d%s",
-     [('s', '', ''), ('d', '', ''), ('s', '', '')]),
+    ("%s %.2f %02x %12d", [
+        Parsed(ParsedType.variable, "s"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "f", ".2"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "x", "02"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "d", "12")]),
+    ("%s %%s %%%s", [
+        Parsed(ParsedType.variable, "s"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "%"),
+        Parsed(ParsedType.text, "s "),
+        Parsed(ParsedType.variable, "%"),
+        Parsed(ParsedType.variable, "s")]),
+    ("%s%d%s", [
+        Parsed(ParsedType.variable, "s"),
+        Parsed(ParsedType.variable, "d"),
+        Parsed(ParsedType.variable, "s")]),
 ]
 
 simple_python = [
-    ("hello %s %d %(hello)s",
-     [(None, "hello ", None), ("s", '', ''), (None, " ", None),
-      ("d", '', ''), (None, " ", None), ("s", '', 'hello')]),
-    ("%()s %(%)s %(%%)s %(s)d",
-     [("s", '', ''), (None, " ", None), ("s", "", "%"), (None, " ", None),
-      ("s", "", "%%"), (None, " ", None), ("d", "", "s")]),
+    ("hello %s %d %(hello)s", [
+        Parsed(ParsedType.text, "hello "),
+        Parsed(ParsedType.variable, "s"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "d"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "s", None, "hello")]),
+    ("%()s %(%)s %(%%)s %(s)d", [
+        Parsed(ParsedType.variable, "s"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "s", None, "%"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "s", None, "%%"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "d", None, "s")]),
 ]
 
 

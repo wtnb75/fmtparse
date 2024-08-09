@@ -1,7 +1,7 @@
 # f-string format
 from enum import Enum, auto
-from typing import Optional
 from collections.abc import Generator
+from .common import Parsed, ParsedType
 
 
 class Fstate(Enum):
@@ -11,10 +11,11 @@ class Fstate(Enum):
     conv = auto()
     bslash = auto()
 
-# mode: "{}:!"
 
-
-def parse(s: str, mode: str) -> Generator[tuple[str, str, Optional[str], Optional[str]], None, None]:
+def parse(s: str, mode: str = r"{}:!") -> Generator[Parsed, None, None]:
+    """
+    parse f-string styled format
+    """
     state: Fstate = Fstate.normal
     text_val, var_val, opt_val, conv_val = "", "", "", ""
     for c in s:
@@ -22,14 +23,14 @@ def parse(s: str, mode: str) -> Generator[tuple[str, str, Optional[str], Optiona
             if c == mode[0]:
                 state = Fstate.paren
                 if text_val:
-                    yield "text", text_val, None, None
+                    yield Parsed(ParsedType.text, text_val)
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 continue
             text_val += c
             continue
         if state == Fstate.paren:
             if c == mode[1]:
-                yield "var", var_val, opt_val, conv_val
+                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue
@@ -43,7 +44,7 @@ def parse(s: str, mode: str) -> Generator[tuple[str, str, Optional[str], Optiona
             continue
         if state == Fstate.opts:
             if c == mode[1]:
-                yield "var", var_val, opt_val, conv_val
+                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue
@@ -54,7 +55,7 @@ def parse(s: str, mode: str) -> Generator[tuple[str, str, Optional[str], Optiona
             continue
         if state == Fstate.conv:
             if c == mode[1]:
-                yield "var", var_val, opt_val, conv_val
+                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue
@@ -64,6 +65,6 @@ def parse(s: str, mode: str) -> Generator[tuple[str, str, Optional[str], Optiona
             conv_val += c
             continue
     if text_val:
-        yield "text", text_val, None, None
+        yield Parsed(ParsedType.text, text_val)
     if var_val:
-        yield "var", var_val, opt_val, conv_val
+        yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
