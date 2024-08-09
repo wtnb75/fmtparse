@@ -25,8 +25,10 @@ simple_python = [
 class TestProstr(unittest.TestCase):
     def test_simple_python(self):
         for a, b in simple_python:
-            self.assertEqual(b, list(fmtparse.printf.parse_python(a)))
+            with self.subTest(f"python: {b}", a=a, b=b):
+                self.assertEqual(b, list(fmtparse.printf.parse_python(a)))
 
     def test_simple_glibc(self):
         for a, b in simple_glibc:
-            self.assertEqual(b, list(fmtparse.printf.parse_glibc(a)))
+            with self.subTest(f"glibc: {b}", a=a, b=b):
+                self.assertEqual(b, list(fmtparse.printf.parse_glibc(a)))

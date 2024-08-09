@@ -26,18 +26,14 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
     [(None, 'hello ', None), ('s', '0-9', ''), (None, '\n', '')]
     """
     state: Pstate = Pstate.normal
-    text_val: str = ""
-    modifier_val: str = ""
-    index_val: str = ""
+    text_val, modifier_val, index_val = "", "", ""
     for c in s:
         if state == Pstate.normal:
             if c in percent:
                 if text_val:
                     yield None, text_val, None
-                    text_val = ""
+                    text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.percent
-                modifier_val = ""
-                index_val = ""
                 continue
             elif c == '\\':
                 state = Pstate.escape
@@ -60,9 +56,7 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
                 continue
             elif c in conversion:
                 yield c, modifier_val, index_val
-                modifier_val = ""
-                index_val = ""
-                text_val = ""
+                text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.normal
                 continue
             raise FormatError(f"invalid conversion: {c}")

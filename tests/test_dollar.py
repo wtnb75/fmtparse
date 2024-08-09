@@ -19,5 +19,6 @@ simple_d = [
 class TestDollar(unittest.TestCase):
     def test_simple(self):
         for input, expected in simple_d:
-            output = list(fmtparse.dollar.parse_envsubst(input))
-            self.assertEqual(expected, output, f"input: {input}")
+            with self.subTest(f"dollar {input}", input=input, expected=expected):
+                output = list(fmtparse.dollar.parse_envsubst(input))
+                self.assertEqual(expected, output, f"input: {input}")

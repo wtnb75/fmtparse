@@ -20,20 +20,17 @@ class Dstate(Enum):
 
 
 def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Optional[str]], None, None]:
-    state = Dstate.normal
-    text_val = ""
-    dollar_val = ""
-    opt_val = ""
+    state: Dstate = Dstate.normal
+    text_val, dollar_val, opt_val = "", "", ""
     for c in s:
         _log.debug("char: %s, state=%s", repr(c), state)
         if state == Dstate.normal:
             if c == mode[0]:
                 state = Dstate.dollar
-                dollar_val = ""
                 if text_val:
                     _log.debug("yield text %s", repr(text_val))
                     yield "text", text_val, None
-                    text_val = ""
+                    text_val, dollar_val, opt_val = "", "", ""
                 continue
             if c == '\\':
                 state = Dstate.bslash
@@ -49,9 +46,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
             if c not in var_chars:
                 _log.debug("yield var %s %s", repr(dollar_val), repr(opt_val))
                 yield "var", dollar_val, opt_val
-                dollar_val = ""
-                opt_val = ""
-                text_val = ""
+                text_val, dollar_val, opt_val = "", "", ""
                 if c == mode[0]:
                     state = Dstate.dollar
                 else:
@@ -63,9 +58,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
             if c == mode[2]:
                 _log.debug("yield var{} %s %s", repr(dollar_val), repr(opt_val))
                 yield "var", dollar_val, opt_val
-                dollar_val = ""
-                opt_val = ""
-                text_val = ""
+                text_val, dollar_val, opt_val = "", "", ""
                 state = Dstate.normal
                 continue
             if len(mode) > 3 and c == mode[3]:
@@ -76,9 +69,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
             if c == mode[2]:
                 _log.debug("yield var{:} %s %s", repr(dollar_val), repr(opt_val))
                 yield "var", dollar_val, opt_val
-                dollar_val = ""
-                opt_val = ""
-                text_val = ""
+                text_val, dollar_val, opt_val = "", "", ""
                 state = Dstate.normal
                 continue
             opt_val += c
