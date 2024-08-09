@@ -4,6 +4,7 @@ from typing import Optional
 from collections.abc import Generator
 from enum import Enum, auto
 from .wellknown import printf_wellknown
+from .common import Parsed, ParsedType
 
 
 class FormatError(Exception):
@@ -18,12 +19,9 @@ class Pstate(Enum):
 
 
 def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, percent: str = "%") -> \
-        Generator[tuple[Optional[str], str, str], None, None]:
-    r"""
+        Generator[Parsed, None, None]:
+    """
     parse printf-style format
-
-    >>> list(parse("hello %0-9s\\n", "s", "0123456789-"))
-    [(None, 'hello ', None), ('s', '0-9', ''), (None, '\n', '')]
     """
     state: Pstate = Pstate.normal
     text_val, modifier_val, index_val = "", "", ""
@@ -31,7 +29,7 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
         if state == Pstate.normal:
             if c in percent:
                 if text_val:
-                    yield None, text_val, None
+                    yield Parsed(ParsedType.text, text_val)
                     text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.percent
                 continue
@@ -55,7 +53,7 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
                 modifier_val += c
                 continue
             elif c in conversion:
-                yield c, modifier_val, index_val
+                yield Parsed(ParsedType.variable, c, modifier_val or None, index_val or None)
                 text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.normal
                 continue
@@ -66,7 +64,7 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
                 continue
             index_val += c
     if text_val:
-        yield None, text_val, ""
+        yield Parsed(ParsedType.text, text_val)
 
 
 def parse_wk(s: str, mode: str) -> Generator[tuple[Optional[str], str, str], None, None]:

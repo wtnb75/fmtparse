@@ -4,6 +4,7 @@ from collections.abc import Generator
 from typing import Optional
 from logging import getLogger
 from .wellknown import dollar_wellknown
+from .common import Parsed, ParsedType
 
 _log = getLogger(__name__)
 
@@ -19,7 +20,10 @@ class Dstate(Enum):
 # mode: '${}:'
 
 
-def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Optional[str]], None, None]:
+def parse(s: str, mode: str, var_chars: str) -> Generator[Parsed, None, None]:
+    """
+    parse $variable styled format
+    """
     state: Dstate = Dstate.normal
     text_val, dollar_val, opt_val = "", "", ""
     for c in s:
@@ -29,7 +33,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
                 state = Dstate.dollar
                 if text_val:
                     _log.debug("yield text %s", repr(text_val))
-                    yield "text", text_val, None
+                    yield Parsed(ParsedType.text, text_val)
                     text_val, dollar_val, opt_val = "", "", ""
                 continue
             if c == '\\':
@@ -45,7 +49,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
         elif state == Dstate.dollar2:
             if c not in var_chars:
                 _log.debug("yield var %s %s", repr(dollar_val), repr(opt_val))
-                yield "var", dollar_val, opt_val
+                yield Parsed(ParsedType.variable, dollar_val, opt_val or None)
                 text_val, dollar_val, opt_val = "", "", ""
                 if c == mode[0]:
                     state = Dstate.dollar
@@ -57,7 +61,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
         elif state == Dstate.in_par:
             if c == mode[2]:
                 _log.debug("yield var{} %s %s", repr(dollar_val), repr(opt_val))
-                yield "var", dollar_val, opt_val
+                yield Parsed(ParsedType.variable, dollar_val, opt_val or None)
                 text_val, dollar_val, opt_val = "", "", ""
                 state = Dstate.normal
                 continue
@@ -68,7 +72,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
         elif state == Dstate.in_opt:
             if c == mode[2]:
                 _log.debug("yield var{:} %s %s", repr(dollar_val), repr(opt_val))
-                yield "var", dollar_val, opt_val
+                yield Parsed(ParsedType.variable, dollar_val, opt_val or None)
                 text_val, dollar_val, opt_val = "", "", ""
                 state = Dstate.normal
                 continue
@@ -78,10 +82,10 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[tuple[str, str, Option
             state = Dstate.normal
     if text_val:
         _log.debug("yield-rest text %s", repr(text_val))
-        yield "text", text_val, None
+        yield Parsed(ParsedType.text, text_val)
     if dollar_val:
         _log.debug("yield-rest var %s %s", repr(dollar_val), repr(opt_val))
-        yield "var", dollar_val, opt_val
+        yield Parsed(ParsedType.variable, dollar_val, opt_val or None)
     _log.debug("finished")
 
 

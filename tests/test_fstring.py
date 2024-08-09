@@ -1,20 +1,36 @@
 import unittest
 import fmtparse.fstring
 import fmtparse.wellknown
+from fmtparse.common import Parsed, ParsedType
 
 simple_f = [
-    (r"hello {name}", [("text", "hello ", None, None), ("var", "name", "", "")]),
-    (r"{abc}{def}{hij}", [("var", "abc", "", ""), ("var", "def", "", ""), ("var", "hij", "", "")]),
+    (r"hello {name}", [
+        Parsed(ParsedType.text, "hello "),
+        Parsed(ParsedType.variable, "name")]),
+    (r"{abc}{def}{hij}", [
+        Parsed(ParsedType.variable, "abc"),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.variable, "hij")]),
     (r"abc {def} {hij} klm{op}qrstu", [
-        ("text", "abc ", None, None), ("var", "def", "", ""), ("text", " ", None, None),
-        ("var", "hij", "", ""), ("text", " klm", None, None), ("var", "op", "", ""),
-        ("text", "qrstu", None, None)]),
+        Parsed(ParsedType.text, "abc "),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "hij"),
+        Parsed(ParsedType.text, " klm"),
+        Parsed(ParsedType.variable, "op"),
+        Parsed(ParsedType.text, "qrstu")]),
     (r"{def} {hij} klm{op:hello!r} {world}", [
-        ("var", "def", "", ""), ("text", " ", None, None), ("var", "hij", "", ""),
-        ("text", " klm", None, None), ("var", "op", "hello", "r"), ("text", " ", None, None),
-        ("var", "world", "", "")]),
+        Parsed(ParsedType.variable, "def"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "hij"),
+        Parsed(ParsedType.text, " klm"),
+        Parsed(ParsedType.variable, "op", "hello", "r"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "world")]),
     (r"{hello:world} {xyz!abc}", [
-        ("var", "hello", "world", ""), ("text", " ", None, None), ("var", "xyz", "", "abc")]),
+        Parsed(ParsedType.variable, "hello", "world"),
+        Parsed(ParsedType.text, " "),
+        Parsed(ParsedType.variable, "xyz", None, "abc")]),
 ]
 
 
