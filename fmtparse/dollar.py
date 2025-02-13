@@ -1,7 +1,6 @@
 import functools
 from enum import Enum, auto
 from collections.abc import Generator
-from typing import Optional
 from logging import getLogger
 from .wellknown import dollar_wellknown
 from .common import Parsed, ParsedType
@@ -89,7 +88,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[Parsed, None, None]:
     _log.debug("finished")
 
 
-def parse_dr(s: str, mode: str) -> Generator[tuple[Optional[str], str, str], None, None]:
+def parse_dr(s: str, mode: str) -> Generator[tuple[str | None, str, str], None, None]:
     yield from parse(s, *dollar_wellknown[mode])
 
 

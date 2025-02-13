@@ -1,6 +1,5 @@
 # printf format
 import functools
-from typing import Optional
 from collections.abc import Generator
 from enum import Enum, auto
 from .wellknown import printf_wellknown
@@ -18,7 +17,7 @@ class Pstate(Enum):
     escape = auto()
 
 
-def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, percent: str = "%") -> \
+def parse(s: str, conversion: str, modifier: str, index: str | None = None, percent: str = "%") -> \
         Generator[Parsed, None, None]:
     """
     parse printf-style format
@@ -67,7 +66,7 @@ def parse(s: str, conversion: str, modifier: str, index: Optional[str] = None, p
         yield Parsed(ParsedType.text, text_val)
 
 
-def parse_wk(s: str, mode: str) -> Generator[tuple[Optional[str], str, str], None, None]:
+def parse_wk(s: str, mode: str) -> Generator[tuple[str | None, str, str], None, None]:
     yield from parse(s, *printf_wellknown[mode])
 
 
