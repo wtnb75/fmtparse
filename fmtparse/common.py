@@ -1,5 +1,5 @@
-from typing import NamedTuple, Optional
 from enum import Enum, auto
+from typing import NamedTuple
 
 
 class ParsedType(Enum):
@@ -10,5 +10,5 @@ class ParsedType(Enum):
 class Parsed(NamedTuple):
     ptype: ParsedType
     value: str
-    option: Optional[str] = None
-    convert: Optional[str] = None
+    option: str | None = None
+    convert: str | None = None
