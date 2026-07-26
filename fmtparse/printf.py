@@ -2,8 +2,9 @@
 import functools
 from collections.abc import Generator
 from enum import Enum, auto
-from .wellknown import printf_wellknown
+
 from .common import Parsed, ParsedType
+from .wellknown import printf_wellknown
 
 
 class FormatError(Exception):
@@ -17,8 +18,9 @@ class Pstate(Enum):
     escape = auto()
 
 
-def parse(s: str, conversion: str, modifier: str, index: str | None = None, percent: str = "%") -> \
-        Generator[Parsed, None, None]:
+def parse(
+    s: str, conversion: str, modifier: str, index: str | None = None, percent: str = "%"
+) -> Generator[Parsed, None, None]:
     """
     parse printf-style format
     """
@@ -32,13 +34,13 @@ def parse(s: str, conversion: str, modifier: str, index: str | None = None, perc
                     text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.percent
                 continue
-            elif c == '\\':
+            elif c == "\\":
                 state = Pstate.escape
                 continue
             text_val += c
         elif state == Pstate.escape:
             state = Pstate.normal
-            if c == 'n':
+            if c == "n":
                 text_val += "\n"
             elif c == "t":
                 text_val += "\t"
@@ -52,7 +54,9 @@ def parse(s: str, conversion: str, modifier: str, index: str | None = None, perc
                 modifier_val += c
                 continue
             elif c in conversion:
-                yield Parsed(ParsedType.variable, c, modifier_val or None, index_val or None)
+                yield Parsed(
+                    ParsedType.variable, c, modifier_val or None, index_val or None
+                )
                 text_val, modifier_val, index_val = "", "", ""
                 state = Pstate.normal
                 continue
@@ -70,7 +74,5 @@ def parse_wk(s: str, mode: str) -> Generator[tuple[str | None, str, str], None, 
     yield from parse(s, *printf_wellknown[mode])
 
 
-for k in printf_wellknown.keys():
-    def _(s):
-        return parse_wk(s, k)
+for k in printf_wellknown:
     locals()[f"parse_{k}"] = functools.partial(parse_wk, mode=k)

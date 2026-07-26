@@ -1,6 +1,6 @@
-import fmtparse.printf
 import fmtparse.dollar
 import fmtparse.fstring
+import fmtparse.printf
 
 
 def test_printf_glibc(benchmark):
