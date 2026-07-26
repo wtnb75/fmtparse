@@ -9,21 +9,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: versioning
       run: "echo \"VERSION = '${GITHUB_REF##*/v}'\" > fmtparse/version.py"
-    - uses: wtnb75/actions/python@v1
-    - uses: wtnb75/actions/ruff@v1
-    - uses: wtnb75/actions/pytest@v1
+    - uses: wtnb75/actions/python@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
+    - uses: wtnb75/actions/ruff@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
+    - uses: wtnb75/actions/pytest@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
     - id: wheel
-      uses: wtnb75/actions/wheel@v1
+      uses: wtnb75/actions/wheel@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
     - id: pdoc
-      uses: wtnb75/actions/pdoc@v1
+      uses: wtnb75/actions/pdoc@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
       with:
         output-dir: docs
         module: fmtparse
         other-options: --docformat google
-    - uses: wtnb75/actions/pypi-upload@v1
+    - uses: wtnb75/actions/pypi-upload@9789197715f5a6b54a25832ce27193be50662266 # v1.0.4
       with:
         username: ${{ secrets.TWINE_USERNAME }}
         password: ${{ secrets.TWINE_PASSWORD }}
