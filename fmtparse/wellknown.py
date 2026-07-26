@@ -1,6 +1,6 @@
 import string
 
-symbol_chars = string.ascii_letters+string.digits+"_"   # a-zA-Z0-9_
+symbol_chars = string.ascii_letters + string.digits + "_"  # a-zA-Z0-9_
 
 printf_wellknown: dict[str, tuple] = {
     "glibc": ("diouxXDOUeEfFgGaAcCSspn%", "#0- +'hljtzqLv123456789."),
@@ -10,7 +10,10 @@ printf_wellknown: dict[str, tuple] = {
     "strftime": ("AaBCcDdeFGgHhIjklMmnpRrSsTtUuVvWwXxYyZz+%", "EO-_0:^#"),
     "py_datetime_strftime": ("aAwdbBmyYHIpMSfzZjUWcxXGuV%", ":"),
     "py_time_strftime": ("aAbBcdfHIjmMpSUwWxXyYzZ%", ""),
-    "ruby_strftime": ("AaBbCcDdeFGgHhIjkLlMmnNPpQRrSsTtUuVvWwXxYyZz+%", ":^#-_0123456789"),
+    "ruby_strftime": (
+        "AaBbCcDdeFGgHhIjkLlMmnNPpQRrSsTtUuVvWwXxYyZz+%",
+        ":^#-_0123456789",
+    ),
     "apache_customlog": ("aAbBCDefhHilmnopPqrstTuUvVXIO%", "<>", r"{}"),
 }
 

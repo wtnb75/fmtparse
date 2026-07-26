@@ -1,6 +1,7 @@
 # f-string format
-from enum import Enum, auto
 from collections.abc import Generator
+from enum import Enum, auto
+
 from .common import Parsed, ParsedType
 
 
@@ -30,7 +31,9 @@ def parse(s: str, mode: str = r"{}:!") -> Generator[Parsed, None, None]:
             continue
         if state == Fstate.paren:
             if c == mode[1]:
-                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
+                yield Parsed(
+                    ParsedType.variable, var_val, opt_val or None, conv_val or None
+                )
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue
@@ -44,7 +47,9 @@ def parse(s: str, mode: str = r"{}:!") -> Generator[Parsed, None, None]:
             continue
         if state == Fstate.opts:
             if c == mode[1]:
-                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
+                yield Parsed(
+                    ParsedType.variable, var_val, opt_val or None, conv_val or None
+                )
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue
@@ -55,7 +60,9 @@ def parse(s: str, mode: str = r"{}:!") -> Generator[Parsed, None, None]:
             continue
         if state == Fstate.conv:
             if c == mode[1]:
-                yield Parsed(ParsedType.variable, var_val, opt_val or None, conv_val or None)
+                yield Parsed(
+                    ParsedType.variable, var_val, opt_val or None, conv_val or None
+                )
                 text_val, var_val, opt_val, conv_val = "", "", "", ""
                 state = Fstate.normal
                 continue

@@ -1,9 +1,10 @@
 import functools
-from enum import Enum, auto
 from collections.abc import Generator
+from enum import Enum, auto
 from logging import getLogger
-from .wellknown import dollar_wellknown
+
 from .common import Parsed, ParsedType
+from .wellknown import dollar_wellknown
 
 _log = getLogger(__name__)
 
@@ -15,6 +16,7 @@ class Dstate(Enum):
     in_par = auto()
     in_opt = auto()
     bslash = auto()
+
 
 # mode: '${}:'
 
@@ -35,7 +37,7 @@ def parse(s: str, mode: str, var_chars: str) -> Generator[Parsed, None, None]:
                     yield Parsed(ParsedType.text, text_val)
                     text_val, dollar_val, opt_val = "", "", ""
                 continue
-            if c == '\\':
+            if c == "\\":
                 state = Dstate.bslash
                 continue
             text_val += c
@@ -92,7 +94,5 @@ def parse_dr(s: str, mode: str) -> Generator[tuple[str | None, str, str], None, 
     yield from parse(s, *dollar_wellknown[mode])
 
 
-for k in dollar_wellknown.keys():
-    def _(s):
-        return parse_dr(s, k)
+for k in dollar_wellknown:
     locals()[f"parse_{k}"] = functools.partial(parse_dr, mode=k)
